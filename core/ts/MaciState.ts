@@ -140,6 +140,7 @@ class Poll {
         )
 
         this.messageAq.enqueue(NOTHING_UP_MY_SLEEVE);
+        this.messageTree.insert(NOTHING_UP_MY_SLEEVE);
 
         for (let i = 0; i < this.maxValues.maxVoteOptions; i ++) {
             this.results.push(BigInt(0))
@@ -292,6 +293,7 @@ class Poll {
 
         // Require that the message queue has been merged
         assert(this.isMessageAqMerged())
+        
         assert(this.messageAq.hasRoot(this.treeDepths.messageTreeDepth))
 
         const batchSize = this.batchSizes.messageBatchSize

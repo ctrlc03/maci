@@ -1,9 +1,13 @@
 jest.setTimeout(9000000)
 require('module-alias/register')
 import {
-    AccQueue,
+    // AccQueue,
     NOTHING_UP_MY_SLEEVE,
 } from 'maci-crypto'
+import {
+    AccQueue
+} from '../../../crypto/ts/AccQueue';
+
 import { deployPoseidonContracts, linkPoseidonLibraries } from '../'
 
 let aqContract

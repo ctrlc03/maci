@@ -102,8 +102,7 @@ class AccQueue {
     ) {
         // This class supports either 2 leaves per node, or 5 leaves per node.
         // 5 is largest number of inputs which circomlib's Poseidon EVM hash
-        // function implementation supports.
-
+        // function implementation supports
         assert(_hashLength === 2 || _hashLength === 5)
         assert(_subDepth > 0)
 

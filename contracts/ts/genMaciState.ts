@@ -11,7 +11,7 @@ import {
 
 import {
     MaciState,
-} from 'maci-core'
+} from '../../core/ts/MaciState'
 
 import * as ethers from 'ethers'
 import * as assert from 'assert'

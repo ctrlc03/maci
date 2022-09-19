@@ -11,14 +11,19 @@ import {
 } from 'maci-domainobjs'
 
 import {
-    MaciState,
+    // MaciState,
     genProcessVkSig,
     genTallyVkSig,
     MaxValues,
     TreeDepths,
 } from 'maci-core'
 
-import { G1Point, G2Point } from 'maci-crypto'
+import {
+    MaciState,
+    Poll
+} from '../../../core/ts/MaciState'
+
+import { G1Point, G2Point, NOTHING_UP_MY_SLEEVE } from 'maci-crypto'
 
 const STATE_TREE_DEPTH = 10
 const STATE_TREE_ARITY = 5
@@ -290,7 +295,7 @@ describe('MACI', () => {
                 messageBatchSize,
                 coordinator,
             )
-            expect(p.toString()).toEqual(pollId.toString())
+            expect(p.toString()).toEqual(pollId.toString());
         })
 
         it('should set correct storage values', async () => {
@@ -529,6 +534,10 @@ describe('MACI', () => {
 
             maciState.stateAq.mergeSubRoots(0)
             maciState.stateAq.merge(STATE_TREE_DEPTH)
+            //  console.log("Get root", this.messageAq.getRoot(this.treeDepths.messageTreeDepth));
+        // console.log("Message tree root", this.messageTree.root);
+            console.log(maciState.polls[0].messageAq.getRoot(maciState.polls[0].treeDepths.messageTreeDepth));
+            console.log(maciState.polls[0].messageTree.root);
         })
 
         it('the state root must be correct', async () => {
@@ -543,7 +552,9 @@ describe('MACI', () => {
         let generatedInputs
 
         beforeAll(async () => {
-            const pollContractAddress = await maciContract.getPoll(pollId)
+            let pollContractAddress;
+            pollContractAddress = await maciContract.getPoll(pollId)
+
             pollContract = new ethers.Contract(
                 pollContractAddress,
                 pollAbi,
@@ -551,13 +562,15 @@ describe('MACI', () => {
             )
 
             poll = maciState.polls[pollId]
+
             generatedInputs = poll.processMessages(pollId)
+   
         })
 
         it('genProcessMessagesPackedVals() should generate the correct value', async () => {
             const packedVals = MaciState.packProcessMessageSmallVals(
                 maxValues.maxVoteOptions,
-                users.length,
+                BigInt(users.length),
                 0,
                 poll.messages.length,
             )
@@ -593,7 +606,7 @@ describe('MACI', () => {
     })
 
     describe('Tally votes', () => {
-        let pollContract
+        let pollContract 
 
         beforeAll(async () => {
             const pollContractAddress = await maciContract.getPoll(pollId)
@@ -623,7 +636,8 @@ describe('MACI', () => {
         it('tallyVotes() should update the tally commitment', async () => {
             expect.assertions(3)
             const poll = maciState.polls[pollId]
-            const generatedInputs = poll.tallyVotes(pollId)
+            const generatedInputs = poll.tallyVotes()
+            console.log("I have generated inputs", generatedInputs);
 
             const pollContractAddress = await maciContract.getPoll(pollId)
             const tx = await pptContract.tallyVotes(
@@ -638,7 +652,7 @@ describe('MACI', () => {
             const onChainNewTallyCommitment = await pptContract.tallyCommitment()
 
             expect(generatedInputs.newTallyCommitment).toEqual(onChainNewTallyCommitment.toString())
-
+            
             try {
                 await pptContract.tallyVotes(
                     pollContractAddress,
