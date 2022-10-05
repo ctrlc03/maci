@@ -127,7 +127,7 @@ const deployTopupCredit = async () => {
 const deployVkRegistry = async () => {
 	const signer = await getDefaultSigner()
     const vkRegistryFactory = await ethers.getContractFactory('VkRegistry', signer)
-    return await vkRegistryFactory.deploy()
+    return await vkRegistryFactory.deploy(await signer.getAddress())
 }
 
 const deployMockVerifier = async (quiet = false) => {
