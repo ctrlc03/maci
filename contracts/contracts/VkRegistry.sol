@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma experimental ABIEncoderV2;
-pragma solidity ^0.7.2;
+pragma solidity ^0.8.10;
 
 import { SnarkCommon } from "./crypto/SnarkCommon.sol";
-import { Owned } from "./utils/Owned.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 /*
  * Stores verifying keys for the circuits.
@@ -25,7 +24,9 @@ contract VkRegistry is Owned, SnarkCommon {
 
     }
 
-    //TODO: event for setVerifyingKeys
+    event ProcessVkSet(uint256 _sig);
+    event TallyVkSet(uint256 _sig);
+    event SubsidyVkSet(uint256 _sig);
 
     function isProcessVkSet(uint256 _sig) public view returns (bool) {
         return processVkSet[_sig];
@@ -91,7 +92,7 @@ contract VkRegistry is Owned, SnarkCommon {
             _messageBatchSize
         );
 
-        require(processVkSet[processVkSig] == false, "VkRegistry: process vk already set");
+        require(!processVkSet[processVkSig], "VkRegistry: process vk already set");
 
         uint256 tallyVkSig = genTallyVkSig(
             _stateTreeDepth,
@@ -99,7 +100,7 @@ contract VkRegistry is Owned, SnarkCommon {
             _voteOptionTreeDepth
         );
 
-        require(tallyVkSet[tallyVkSig] == false, "VkRegistry: tally vk already set");
+        require(!tallyVkSet[tallyVkSig], "VkRegistry: tally vk already set");
 
         VerifyingKey storage processVk = processVks[processVkSig];
         processVk.alpha1 = _processVk.alpha1;
@@ -121,6 +122,9 @@ contract VkRegistry is Owned, SnarkCommon {
             tallyVk.ic.push(_tallyVk.ic[i]);
         }
         tallyVkSet[tallyVkSig] = true;
+
+        emit TallyVkSet(tallyVkSig);
+        emit ProcessVkSet(processVkSig);
     }
 
     function setSubsidyKeys(
@@ -136,7 +140,7 @@ contract VkRegistry is Owned, SnarkCommon {
             _voteOptionTreeDepth
         );
 
-        require(subsidyVkSet[subsidyVkSig] == false, "VkRegistry: subsidy vk already set");
+        require(!subsidyVkSet[subsidyVkSig], "VkRegistry: subsidy vk already set");
 
         VerifyingKey storage subsidyVk = subsidyVks[subsidyVkSig];
         subsidyVk.alpha1 = _subsidyVk.alpha1;
@@ -147,6 +151,8 @@ contract VkRegistry is Owned, SnarkCommon {
             subsidyVk.ic.push(_subsidyVk.ic[i]);
         }
         subsidyVkSet[subsidyVkSig] = true;
+
+        emit SubsidyVkSet(subsidyVkSig);
     }
 
     function hasProcessVk(
@@ -167,7 +173,7 @@ contract VkRegistry is Owned, SnarkCommon {
     function getProcessVkBySig(
         uint256 _sig
     ) public view returns (VerifyingKey memory) {
-        require(processVkSet[_sig] == true, "VkRegistry: process verifying key not set");
+        require(processVkSet[_sig], "VkRegistry: process verifying key not set");
 
         return processVks[_sig];
     }
@@ -205,7 +211,7 @@ contract VkRegistry is Owned, SnarkCommon {
     function getTallyVkBySig(
         uint256 _sig
     ) public view returns (VerifyingKey memory) {
-        require(tallyVkSet[_sig] == true, "VkRegistry: tally verifying key not set");
+        require(tallyVkSet[_sig], "VkRegistry: tally verifying key not set");
 
         return tallyVks[_sig];
     }
@@ -241,7 +247,7 @@ contract VkRegistry is Owned, SnarkCommon {
     function getSubsidyVkBySig(
         uint256 _sig
     ) public view returns (VerifyingKey memory) {
-        require(subsidyVkSet[_sig] == true, "VkRegistry: subsidy verifying key not set");
+        require(subsidyVkSet[_sig], "VkRegistry: subsidy verifying key not set");
 
         return subsidyVks[_sig];
     }
