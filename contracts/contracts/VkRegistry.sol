@@ -9,7 +9,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
  * Each circuit has a signature which is its compile-time constants represented
  * as a uint256.
  */
-contract VkRegistry is Owned, SnarkCommon {
+contract VkRegistry is Ownable, SnarkCommon {
 
     mapping (uint256 => VerifyingKey) internal processVks; 
     mapping (uint256 => bool) internal processVkSet; 
@@ -19,10 +19,6 @@ contract VkRegistry is Owned, SnarkCommon {
 
     mapping (uint256 => VerifyingKey) internal subsidyVks; 
     mapping (uint256 => bool) internal subsidyVkSet; 
-
-    constructor(address _owner) Owned(_owner) {
-
-    }
 
     event ProcessVkSet(uint256 _sig);
     event TallyVkSet(uint256 _sig);

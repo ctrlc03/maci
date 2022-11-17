@@ -42,11 +42,11 @@ const config: HardhatUserConfig = {
       timeout: 60000,
       accounts,
     },
-    rinkarby: {
-      url:
-        process.env.JSONRPC_HTTP_URL ||
-        "https://rinkeby.arbitrum.io/rpc",
-      accounts,
+    arbitrum_goerli: {
+      url: 
+        process.env.JSONRPC_HTTP_URL || 
+        "https://goerli-rollup.arbitrum.io/rpc",
+        accounts,
     },
     arbitrum: {
       url: process.env.JSONRPC_HTTP_URL || "https://arb1.arbitrum.io/rpc",
@@ -62,7 +62,7 @@ const config: HardhatUserConfig = {
     disambiguatePaths: false,
   },
   solidity: {
-    version: "0.7.2",
+    version: "0.8.10",
     settings: {
       optimizer: {
         enabled: true,

@@ -30,7 +30,7 @@ describe("VkRegistry", function () {
 
     describe("Deploy", async () => {
         it("should deploy the VkRegistry", async () => {
-            await factoryContract.connect(signer).deploy(salt, signerAddress)
+            await factoryContract.connect(signer).deploy(salt)
             const deployedAddress = await factoryContract.vkRegistryAddress()
             expect(deployedAddress).to.not.eq(ethers.constants.AddressZero)
             vkRegistryAddress = deployedAddress
@@ -59,7 +59,7 @@ describe("VkRegistry", function () {
             // confirm that the nonce increased
             expect(nonceBefore + 1).to.eq(nonceAfter)
 
-            await factoryContract.connect(signer).deploy(salt, signerAddress)
+            await factoryContract.connect(signer).deploy(salt)
             const deployedAddress = await factoryContract.vkRegistryAddress()
             expect(deployedAddress).to.eq(vkRegistryAddress)
         })
